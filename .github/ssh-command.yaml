@@ -31,13 +31,13 @@
 # GitHub recommends pinning actions to a commit SHA.
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
-
+#CI Part
 name: Publish Docker image
 
 on:
   push:
     branches:
-       -master
+      fake ## -master (to disable)
 
 jobs:
   push_to_registry:
@@ -73,11 +73,19 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v2
+#CD Part
+  build: |
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v0.1.7
         with:
-          subject-name: index.docker.io/my-docker-hub-namespace/my-docker-hub-repository
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
-          
+          host: ${{ secrets.HOST }}
+          username: linuxserver.io
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+             docker stop edward
+             docker rm edward
+             docker run -d --name -p 9000:9000 edward          
