@@ -1,6 +1,6 @@
 jenkins installation
 
-java -version
+
 sudo apt Update
 sudo apt install openjdk-11-jdk -y
 java -version
@@ -14,3 +14,14 @@ sudo systemctl start jenkins
 sudo systemctl status jenkins
 curl localhost:8080
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+sudo !! : for Password
+
+
+vim /etc/ssh/sshd_config
+permitRootLogin yes
+PasswordAuthentication yes
+sudo service ssh restatrt
+PubKeyAuthentication yes
+sudo passwd $user
+echo $user
+ssh <public ip port>
